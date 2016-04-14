@@ -20,13 +20,34 @@ private:
 	AdjacencySet _localAdjacencySet;
 	int _numLinks;
 private:
+
+	//Method: Generate
+	//Handles generate event from Routing model. Creates and stores a new packet
 	void Generate();
+
+	//Method: Process
+	//Handles packet processing. May decide to consume or send a packet
 	void Process();
+
 	class GenerateEvent;
 	class NodeSendEvent;
 public:
+
+	//Constructor
+	//Parameters:	id - id given to this Router
+	//				serviceTime - delay to apply between processing and sending a packet
+	//				generationRate - the number of packets to create per time unit
+	//				numLinks
 	Router(int id, double serviceTime, double generationRate, int numLinks);
+
+	//Method: NodeReceive
+	//Parameters: Packet* packet - packet to receive from upper Graph layer
+	//Called from Node base class. Handles receive event from Routing model
 	void NodeReceive(Packet* packet);
+
+	//Method: NodeSend
+	//Parameters: Packet* packet - packet to send to upper Graph layer
+	//Determines where to send a processed packet. Handles the send event from Routing model.
 	void NodeSend(Packet* packet);
 
 };

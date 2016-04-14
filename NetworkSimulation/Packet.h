@@ -1,5 +1,8 @@
 #pragma once
 
+//Note: Very primitive definition of a packet.
+//May want to add more information to facilitate routing operations.
+
 struct Packet
 {
 	int _id;
