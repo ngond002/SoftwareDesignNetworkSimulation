@@ -1,0 +1,10 @@
+
+# Directories not important
+.vs/
+
+# Visual Studio Files
+*.sdf
+
+# Compile directories
+x64/
+Debug/
