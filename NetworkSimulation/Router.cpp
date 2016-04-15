@@ -58,6 +58,8 @@ void Router::Generate()
 	// add to internal queue
 	_queues[_nodeId].Enqueue(packet);
 	_packetsInProcess++;
+	
+	//log addition
 
 	// schedule next generation of a packet
 	Time delay = 1 / _generationRate;
