@@ -1,5 +1,4 @@
 #include "Router.h"
-#include "Event.h"
 #include "Graph.h"
 
 class Router::GenerateEvent : public Event

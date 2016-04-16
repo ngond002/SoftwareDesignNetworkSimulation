@@ -121,7 +121,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AdjacencySet.h" />
-    <ClInclude Include="Event.h" />
     <ClInclude Include="FIFOQueue.h" />
     <ClInclude Include="Graph.h" />
     <ClInclude Include="Node.h" />
@@ -132,6 +131,7 @@
   <ItemGroup>
     <ClCompile Include="FIFOQueue.cpp" />
     <ClCompile Include="Router.cpp" />
+    <ClCompile Include="SimObj.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
