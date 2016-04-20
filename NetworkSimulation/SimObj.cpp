@@ -100,7 +100,7 @@ void SimObj::ScheduleEventIn(Time time, Event *evt)
 	_eventSet.AddEvent(_currentSimTime + time, evt);
 }
 
-Time SimObj::GetCurrentSimTime()
+Time GetCurrentSimTime()
 {
-	return(_currentSimTime);
+	return(SimObj::_currentSimTime);
 }

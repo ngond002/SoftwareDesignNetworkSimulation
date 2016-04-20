@@ -8,6 +8,7 @@ protected:
 	int _nodeId;
 public:
 	Node(int id);
+
 	int GetId();
 
 	//Method: ReceivePacket

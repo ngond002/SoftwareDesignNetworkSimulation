@@ -5,6 +5,7 @@ typedef double Time;
 
 void RunSimulation();
 void RunSimulation(Time endTime);
+Time GetCurrentSimTime(); // modified GetCurrentTime as friend function
 
 class Event
 {
@@ -15,14 +16,13 @@ public:
 class SimObj
 {
 public:
-	//friend Time GetCurrentSimTime();
+	friend Time GetCurrentSimTime();
 	friend void RunSimulation();
 	friend void RunSimulation(Time endTime);
 protected:
 	SimObj();
 	void ScheduleEventIn(Time delta, Event *evt);
 	void ScheduleEventAt(Time time, Event *evt);
-	Time GetCurrentSimTime();
 private:
 	static Time _currentSimTime;
 	class EventSet;

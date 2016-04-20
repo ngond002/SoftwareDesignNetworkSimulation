@@ -1,5 +1,7 @@
 #include "Router.h"
 #include "Graph.h"
+#include <iostream>
+using namespace std;
 
 class Router::GenerateEvent : public Event
 {
@@ -34,15 +36,21 @@ public:
 	}
 };
 
-Router::Router(int id, double serviceTime, double generationRate, int numLinks) :
-	Node(id), _localAdjacencySet(numLinks) // Maybe change passing in numLinks to a global call to Graph
+Router::Router(int id, double serviceTime, double generationRate) :
+	Node(id), _localAdjacencySet(Graph::Instance()->GetGlobalAdjacency())
 {
+	_numLinks = Graph::Instance()->NodeCount();
 	_serviceTime = serviceTime;
 	_generationRate = generationRate;
-	_queues = new FIFOQueue[numLinks];
+	_queues = new FIFOQueue[_numLinks];
+
+	for (int i = 0; i < _numLinks; i++) // identify queues for this router
+	{
+		_queues[i].SetName("Queue");
+	}
+
 	_routerIdle = false;
 	_packetsInProcess = 0;
-	_numLinks = numLinks;
 }
 
 void Router::Generate()
@@ -59,6 +67,7 @@ void Router::Generate()
 	_packetsInProcess++;
 	
 	//log addition
+	cout << GetCurrentSimTime() << ", Router " << _nodeId << ", Add, Packet " << packet->_id << endl;
 
 	// schedule next generation of a packet
 	Time delay = 1 / _generationRate;
@@ -88,7 +97,7 @@ void Router::NodeReceive(Packet* packet)
 #if defined USE_GLOBAL_MATRIX
 	// update global adjacency set
 	int weight = _queues[previous].Size();
-	Graph::Instance()->GetGlobalAdjacency()->UpdateWeight(previous, _nodeId, weight);
+	Graph::Instance()->GetGlobalAdjacency().UpdateWeight(previous, _nodeId, weight);
 #endif
 
 	// check if router is idle
@@ -126,6 +135,9 @@ void Router::Process()
 	packet = _queues[_currentQueue].Dequeue();
 	_packetsInProcess--;
 
+	//log processing
+	cout << GetCurrentSimTime() << ", Router " << _nodeId << ", Process, Packet " << packet->_id << endl;
+
 #ifndef USE_GLOBAL_MATRIX
 	// update the local table with information about the packet
 	int weight = packet->_prevQueueSize;
@@ -133,7 +145,7 @@ void Router::Process()
 #endif
 
 	// determine if packet should be sent
-	if (packet->_destId == _nodeId)
+	if (packet->_destId != _nodeId)
 	{
 		// determine delay and schedule send event
 		Time delay = _serviceTime; // constant service time
@@ -142,6 +154,7 @@ void Router::Process()
 	else
 	{
 		// consume event
+		cout << GetCurrentSimTime() << ", Router " << _nodeId << ", Consume, Packet " << packet->_id << endl;
 	}
 	
 }
@@ -150,7 +163,7 @@ void Router::NodeSend(Packet* packet)
 {
 	// obtain next node to send packet
 #if defined USE_GLOBAL_MATRIX
-	int nextId = Graph::Instance()->GetGlobalAdjacency()->GetNextNode(_nodeId, packet->_destId);
+	int nextId = Graph::Instance()->GetGlobalAdjacency().GetNextNode(_nodeId, packet->_destId);
 #else
 	int nextId = _localAdjacencySet.GetNextNode(_nodeId, packet->_destId);
 #endif

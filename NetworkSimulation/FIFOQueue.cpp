@@ -1,5 +1,7 @@
 #include "FIFOQueue.h"
+#include "SimObj.h"
 #include <iostream>
+
 
 struct FIFOQueue::QueueEntry
 {
@@ -20,6 +22,11 @@ FIFOQueue::FIFOQueue()
 	_queueSize = 0;
 }
 
+void FIFOQueue::SetName(string name)
+{
+	_name = name;
+}
+
 void FIFOQueue::Enqueue(Packet* packet)
 {
 	if (_head == nullptr) // empty queue
@@ -33,7 +40,9 @@ void FIFOQueue::Enqueue(Packet* packet)
 		_tail = _tail->_next;
 	}
 
+	cout << GetCurrentSimTime() << ", queue " << _name << ", Enqueue, Entity , queue size, " << _queueSize << endl;
 	_queueSize++; // incr size
+	cout << GetCurrentSimTime() << ", queue " << _name << ", Enqueue, Entity , queue size, " << _queueSize << endl;
 	
 }
 
@@ -43,7 +52,11 @@ Packet* FIFOQueue::Dequeue()
 	_head = _head->_next;
 	Packet* packet = _head->_packet;
 	delete(entry); //free memory
+
+	cout << GetCurrentSimTime() << ", queue " << _name << ", Dequeue, Entity , queue size, " << _queueSize << endl;
 	_queueSize--; //decr size
+	cout << GetCurrentSimTime() << ", queue " << _name << ", Dequeue, Entity , queue size, " << _queueSize << endl;
+
 	return(packet);
 }
 

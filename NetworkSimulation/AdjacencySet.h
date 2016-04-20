@@ -2,7 +2,9 @@
 
 class AdjacencySet
 {
-	double** weights;
+	int** weights;
+	int _numNodes;
+	int _validLinks;
 public:
 	//Method: Constructor
 	//Parameter: numNodes - number of Nodes that make up the graph

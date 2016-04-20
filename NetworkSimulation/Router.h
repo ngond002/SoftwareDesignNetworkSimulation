@@ -6,7 +6,7 @@
 #include "Node.h"
 #include "SimObj.h"
 
-#define USE_GLOBAL_MATRIX;
+#define USE_GLOBAL_MATRIX
 
 class Router : virtual public Node, public SimObj
 {
@@ -38,7 +38,7 @@ public:
 	//				serviceTime - delay to apply between processing and sending a packet
 	//				generationRate - the number of packets to create per time unit
 	//				numLinks
-	Router(int id, double serviceTime, double generationRate, int numLinks);
+	Router(int id, double serviceTime, double generationRate);
 
 	//Method: NodeReceive
 	//Parameters: Packet* packet - packet to receive from upper Graph layer

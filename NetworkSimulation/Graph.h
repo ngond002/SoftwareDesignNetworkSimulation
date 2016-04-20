@@ -6,12 +6,13 @@
 class Graph
 {
 private:
-	Node* _nodes;
-	AdjacencySet _globalAdjacencySet;
-	static Graph* _instance;
-public:
 	Graph();
-
+private:
+	Node** _nodes;
+	AdjacencySet* _globalAdjacencySet;
+	static Graph* _instance;
+	int _numNodes;
+public:
 	//Method: GetNode
 	//Parameters: id - id of node to return
 	//Return - pointer to node
@@ -19,7 +20,7 @@ public:
 
 	//Method: GetGlobalAdjacency
 	//Return - reference to Graph Adjacency Set
-	AdjacencySet* GetGlobalAdjacency();
+	AdjacencySet& GetGlobalAdjacency();
 
 	//Method: Instance
 	//Return - reference to global Graph object

@@ -129,8 +129,12 @@
     <ClInclude Include="SimObj.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AdjacencySet.cpp" />
     <ClCompile Include="FIFOQueue.cpp" />
+    <ClCompile Include="Graph.cpp" />
+    <ClCompile Include="Node.cpp" />
     <ClCompile Include="Router.cpp" />
+    <ClCompile Include="AdjacencyTest.cpp" />
     <ClCompile Include="SimObj.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
