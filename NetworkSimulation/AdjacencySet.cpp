@@ -76,7 +76,7 @@ void AdjacencySet::UpdateWeight(int srcId, int destId, int weight)
 int AdjacencySet::GetNextNode(int srcId, int destId)
 {
 	PathNode* pathNodes = new PathNode[_numNodes];
-	PathNode* considered = new PathNode[_validLinks];
+	PathNode* considered = new PathNode[_numNodes*_numNodes];
 	int numNotVisited = _numNodes - 1;
 	int numConsideredEdges = 0;
 
@@ -154,5 +154,8 @@ int AdjacencySet::GetNextNode(int srcId, int destId)
 		nextIndex = pathNodes[nextIndex].previousIndex;
 	}
 
-	return(nextIndex);
+	delete[] pathNodes;
+	delete[] considered;
+
+	return(nextIndex + 1);
 }

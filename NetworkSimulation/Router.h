@@ -5,6 +5,7 @@
 #include "AdjacencySet.h"
 #include "Node.h"
 #include "SimObj.h"
+#include "Distribution.h"
 
 #define USE_GLOBAL_MATRIX
 
@@ -15,10 +16,12 @@ private:
 	bool _routerIdle;
 	int _currentQueue;
 	int _packetsInProcess;
-	double _serviceTime;
-	double _generationRate;
-	AdjacencySet _localAdjacencySet;
+	Distribution* _serviceTime;
+	Distribution* _generationRate;
+	AdjacencySet* _localAdjacencySet;
 	int _numLinks;
+	int* otherLinks;
+
 private:
 
 	//Method: Generate
@@ -38,16 +41,9 @@ public:
 	//				serviceTime - delay to apply between processing and sending a packet
 	//				generationRate - the number of packets to create per time unit
 	//				numLinks
-	Router(int id, double serviceTime, double generationRate);
+	//Router(int id, double serviceTime, double generationRate);
+	Router(int id, Distribution* serviceTime, Distribution* generationRate, int linkCount, AdjacencySet* initialSet);
 
-	//Method: NodeReceive
-	//Parameters: Packet* packet - packet to receive from upper Graph layer
-	//Called from Node base class. Handles receive event from Routing model
 	void NodeReceive(Packet* packet);
-
-	//Method: NodeSend
-	//Parameters: Packet* packet - packet to send to upper Graph layer
-	//Determines where to send a processed packet. Handles the send event from Routing model.
 	void NodeSend(Packet* packet);
-
 };

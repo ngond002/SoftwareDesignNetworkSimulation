@@ -29,4 +29,8 @@ public:
 	//Method: NodeCount
 	//Return - number of nodes in the Graph
 	int NodeCount();
+
+	//Method: Preprocess
+	//Initializes nodes with graph information
+	void Preprocess();
 };

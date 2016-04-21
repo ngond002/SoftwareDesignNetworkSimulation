@@ -3,6 +3,8 @@
 #include <iostream>
 using namespace std;
 
+int Packet::_nextId = 0;
+
 class Router::GenerateEvent : public Event
 {
 	Router* _router;
@@ -36,48 +38,82 @@ public:
 	}
 };
 
-Router::Router(int id, double serviceTime, double generationRate) :
-	Node(id), _localAdjacencySet(Graph::Instance()->GetGlobalAdjacency())
+Router::Router(int id, Distribution* serviceTime, Distribution* generationRate, int linkCount, AdjacencySet* initialSet) : Node(id)
 {
-	_numLinks = Graph::Instance()->NodeCount();
+	_numLinks = linkCount;
 	_serviceTime = serviceTime;
 	_generationRate = generationRate;
 	_queues = new FIFOQueue[_numLinks];
+	_routerIdle = true; 
+	_packetsInProcess = 0;
+	_localAdjacencySet = new AdjacencySet(*initialSet); // copy from external set
 
-	for (int i = 0; i < _numLinks; i++) // identify queues for this router
+	int numOtherLinks = 0;
+	otherLinks = new int[_numLinks - 1];
+
+	for (int link = 1; link <= _numLinks; link++) // get all other links that are not ours
 	{
-		_queues[i].SetName("Queue");
+		if (link != _nodeId)
+		{
+			otherLinks[numOtherLinks] = (link);
+			numOtherLinks++;
+		}
 	}
 
-	_routerIdle = false;
-	_packetsInProcess = 0;
+	// schedule first generation of a packet
+	double delay = _generationRate->GetRV();
+	ScheduleEventIn(delay, new GenerateEvent(this));
 }
 
 void Router::Generate()
 {
+	// assign a random destination in network
+	// generate rn
+	double rn = (((double)rand()) / (((double)RAND_MAX) + 1.0));
+
+	int numOtherLinks = _numLinks - 1;
+	int destId;
+
+	// transform from discrete distribution
+	if (rn == 0.0)
+	{
+		destId = otherLinks[0];
+	}
+	else
+	{
+		for (int n = 0; n < numOtherLinks; n++)
+		{
+			double lowerLimit = (n / (double)numOtherLinks);
+			double upperLimit = (n + 1) / (double)numOtherLinks;
+
+			if (rn > lowerLimit && rn <= upperLimit)
+			{
+				destId = otherLinks[n];
+			}
+		}
+	}
+
 	// create a new packet
 	Packet* packet = new Packet;
-
-	// assign a random destination in network
-	int destId = 0;
 	packet->_destId = destId;
 
-	// add to internal queue
-	_queues[_nodeId].Enqueue(packet);
-	_packetsInProcess++;
-	
 	//log addition
-	cout << GetCurrentSimTime() << ", Router " << _nodeId << ", Add, Packet " << packet->_id << endl;
+	cout << GetCurrentSimTime() << ", Router" << _nodeId << " Generate, Packet " << packet->_id <<
+		" for Router " << destId << endl;
+
+	// add to internal queue
+	_queues[_nodeId-1].Enqueue(packet);
+	_packetsInProcess++;	
 
 	// schedule next generation of a packet
-	Time delay = 1 / _generationRate;
+	double delay = _generationRate->GetRV();
 	ScheduleEventIn(delay, new GenerateEvent(this));
 
 	// check if router is idle
 	if (_routerIdle)
 	{
 		//if idle, set the current queue and process the queue
-		_currentQueue = _nodeId;
+		_currentQueue = _nodeId-1;
 		_routerIdle = false;
 		Process();
 	}
@@ -89,14 +125,18 @@ void Router::Generate()
 
 void Router::NodeReceive(Packet* packet)
 {
-	// add packet to correct queue based on previous id
 	int previous = packet->_prevId;
-	_queues[previous].Enqueue(packet);
+
+	cout << GetCurrentSimTime() << ", Router" << _nodeId << " Receive Packet " << packet->_id <<
+		" from Router " << previous << endl;
+
+	// add packet to correct queue based on previous id
+	_queues[previous-1].Enqueue(packet);
 	_packetsInProcess++;
 
 #if defined USE_GLOBAL_MATRIX
 	// update global adjacency set
-	int weight = _queues[previous].Size();
+	int weight = _queues[previous-1].Size();
 	Graph::Instance()->GetGlobalAdjacency().UpdateWeight(previous, _nodeId, weight);
 #endif
 
@@ -104,7 +144,7 @@ void Router::NodeReceive(Packet* packet)
 	if (_routerIdle)
 	{
 		//if idle, set the current queue and process the queue
-		_currentQueue = previous;
+		_currentQueue = previous-1;
 		_routerIdle = false;
 		Process();
 	}
@@ -136,7 +176,7 @@ void Router::Process()
 	_packetsInProcess--;
 
 	//log processing
-	cout << GetCurrentSimTime() << ", Router " << _nodeId << ", Process, Packet " << packet->_id << endl;
+	cout << GetCurrentSimTime() << ", Router" << _nodeId << " Process, Packet " << packet->_id << endl;
 
 #ifndef USE_GLOBAL_MATRIX
 	// update the local table with information about the packet
@@ -148,13 +188,13 @@ void Router::Process()
 	if (packet->_destId != _nodeId)
 	{
 		// determine delay and schedule send event
-		Time delay = _serviceTime; // constant service time
+		double delay = _serviceTime->GetRV();
 		ScheduleEventIn(delay, new NodeSendEvent(this, packet));
 	}
 	else
 	{
 		// consume event
-		cout << GetCurrentSimTime() << ", Router " << _nodeId << ", Consume, Packet " << packet->_id << endl;
+		cout << GetCurrentSimTime() << ", Router" << _nodeId << " Consume Packet " << packet->_id << endl;
 	}
 	
 }
@@ -177,6 +217,11 @@ void Router::NodeSend(Packet* packet)
 	//nextNode->ReceivePacket(packet);
 
 	//--------------------------------------------------------
+	cout << GetCurrentSimTime() << ", Router" << _nodeId << " Send Packet " << packet->_id <<
+		" to Router " << nextId << endl;
+	
+	packet->_prevId = _nodeId;
+	packet->_prevQueueSize = _queues[nextId - 1].Size();
 
 	SendPacket(packet, nextId); // call upper layer send
 

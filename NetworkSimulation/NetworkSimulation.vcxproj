@@ -121,6 +121,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AdjacencySet.h" />
+    <ClInclude Include="Distribution.h" />
     <ClInclude Include="FIFOQueue.h" />
     <ClInclude Include="Graph.h" />
     <ClInclude Include="Node.h" />
@@ -130,8 +131,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AdjacencySet.cpp" />
+    <ClCompile Include="Distribution.cpp" />
     <ClCompile Include="FIFOQueue.cpp" />
     <ClCompile Include="Graph.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Router.cpp" />
     <ClCompile Include="AdjacencyTest.cpp" />

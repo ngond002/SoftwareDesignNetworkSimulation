@@ -40,9 +40,8 @@ void FIFOQueue::Enqueue(Packet* packet)
 		_tail = _tail->_next;
 	}
 
-	cout << GetCurrentSimTime() << ", queue " << _name << ", Enqueue, Entity , queue size, " << _queueSize << endl;
 	_queueSize++; // incr size
-	cout << GetCurrentSimTime() << ", queue " << _name << ", Enqueue, Entity , queue size, " << _queueSize << endl;
+	//cout << GetCurrentSimTime() << "\tQueue" << _name << "\tEnqueue Entity\tqueue size " << _queueSize << endl;
 	
 }
 
@@ -50,12 +49,11 @@ Packet* FIFOQueue::Dequeue()
 {
 	QueueEntry* entry = _head;
 	_head = _head->_next;
-	Packet* packet = _head->_packet;
+	Packet* packet = entry->_packet;
 	delete(entry); //free memory
 
-	cout << GetCurrentSimTime() << ", queue " << _name << ", Dequeue, Entity , queue size, " << _queueSize << endl;
 	_queueSize--; //decr size
-	cout << GetCurrentSimTime() << ", queue " << _name << ", Dequeue, Entity , queue size, " << _queueSize << endl;
+	//cout << GetCurrentSimTime() << ", queue " << _name << ", Dequeue, Entity , queue size, " << _queueSize << endl;
 
 	return(packet);
 }

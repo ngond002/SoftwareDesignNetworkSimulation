@@ -31,4 +31,5 @@ public:
 	//Parameters: Packet* packet - packet to send to upper Graph layer
 	//Determines where to send a processed packet. Handles the send event from Routing model.
 	virtual void NodeSend(Packet* packet) = 0;
+
 };
