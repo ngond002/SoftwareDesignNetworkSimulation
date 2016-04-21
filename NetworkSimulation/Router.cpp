@@ -292,6 +292,10 @@ void Router::NodeSend(Packet* packet)
 
 void Router::PrintStats()
 {
+	//correction term for service times
+	_runningServiceTimes += (GetCurrentSimTime() - _lastIdleTime);
+	_lastIdleTime = GetCurrentSimTime();
+
 	std::cout << std::endl;
 	std::cout << "Router<" << _nodeId << ">:\n";
 	std::cout << "AvgProcessTime: " << _runningServiceTimes / _numberExited << std::endl;

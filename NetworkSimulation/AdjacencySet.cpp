@@ -38,7 +38,7 @@ AdjacencySet::AdjacencySet(int numNodes)
 			weights[row][column] = -1; //initially all weights are less than zero; meaning disconnected
 		}
 	}
-	_validLinks = 0;
+	
 	_numNodes = numNodes;
 }
 
@@ -61,21 +61,6 @@ AdjacencySet::AdjacencySet(const AdjacencySet& other)
 
 void AdjacencySet::UpdateWeight(int srcId, int destId, int weight)
 {
-	if (weights[srcId-1][destId-1] < 0)
-	{
-		if (weight > 0)
-		{
-			_validLinks++;
-		}
-	}
-	else
-	{
-		if (weight < 0)
-		{
-			_validLinks--;
-		}
-	}
-
 	weights[srcId-1][destId-1] = weight;
 }
 

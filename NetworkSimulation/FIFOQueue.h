@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 #include "Packet.h"
-#include "Observer.h"
 using namespace std;
 
 class FIFOQueue

@@ -1,5 +1,4 @@
 #pragma once
-#include "Observer.h"
 
 class Packet
 {

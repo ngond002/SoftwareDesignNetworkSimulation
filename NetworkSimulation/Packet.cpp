@@ -1,5 +1,6 @@
 #include "Packet.h"
 #include "SimObj.h"
+#include <iostream>
 
 double Packet::_runningWaitTime = 0.0;
 double Packet::_runningTotalTime = 0.0;

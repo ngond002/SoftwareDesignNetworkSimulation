@@ -1,6 +1,7 @@
 #include "Graph.h"
 #include "Router.h"
 #include "Distribution.h"
+#include <iostream>
 
 Graph* Graph::_instance = nullptr;
 
