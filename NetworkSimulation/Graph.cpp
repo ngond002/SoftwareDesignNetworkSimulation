@@ -7,11 +7,17 @@ Graph* Graph::_instance = nullptr;
 Graph::Graph()
 {
 	// create the graph nodes
+	//_numNodes = 3;
 	_numNodes = 10;
 	_nodes = new Node*[_numNodes];
 	
 	// initialize the adjacency set
 	_globalAdjacencySet = new AdjacencySet(_numNodes);
+	//_globalAdjacencySet->UpdateWeight(1, 2, 0);
+	//_globalAdjacencySet->UpdateWeight(2, 1, 0);
+	//_globalAdjacencySet->UpdateWeight(2, 3, 0);
+	//_globalAdjacencySet->UpdateWeight(3, 2, 0);
+
 	_globalAdjacencySet->UpdateWeight(1, 2, 0);
 	_globalAdjacencySet->UpdateWeight(1, 4, 0);
 	_globalAdjacencySet->UpdateWeight(2, 3, 0);
@@ -36,6 +42,10 @@ Graph::Graph()
 	_globalAdjacencySet->UpdateWeight(9, 10, 0);
 	_globalAdjacencySet->UpdateWeight(10, 4, 0);
 	_globalAdjacencySet->UpdateWeight(10, 9, 0);
+
+	//_nodes[0] = new Router(1, new Triangular(0.9, 1.0, 1.1), new Exponential(3.0), _numNodes, _globalAdjacencySet);
+	//_nodes[1] = new Router(2, new Triangular(0.8, 0.8, 0.8), new Exponential(3.0), _numNodes, _globalAdjacencySet);
+	//_nodes[2] = new Router(3, new Triangular(0.9, 0.9, 0.9), new Exponential(3.0), _numNodes, _globalAdjacencySet);
 
 	//create the node routers of the network
 	_nodes[0] = new Router(1, new Triangular(0.9, 1.0, 1.1), new Exponential(3.0), _numNodes, _globalAdjacencySet);
@@ -75,3 +85,18 @@ int Graph::NodeCount()
 {
 	return(_numNodes);
 }
+
+void Graph::PrintStats()
+{
+	std::cout << std::endl;
+	std::cout << "Graph Statistics:*************" << std::endl;
+	for (int node = 0; node < _numNodes; node++)
+	{
+		this->_nodes[node]->PrintStats();
+	}
+
+	Packet::PrintStats();
+	
+}
+
+

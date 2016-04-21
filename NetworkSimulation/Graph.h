@@ -30,7 +30,6 @@ public:
 	//Return - number of nodes in the Graph
 	int NodeCount();
 
-	//Method: Preprocess
-	//Initializes nodes with graph information
-	void Preprocess();
+	// Display stats for entire graph system
+	void PrintStats();
 };

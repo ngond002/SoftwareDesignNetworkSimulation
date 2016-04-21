@@ -32,4 +32,7 @@ public:
 	//Determines where to send a processed packet. Handles the send event from Routing model.
 	virtual void NodeSend(Packet* packet) = 0;
 
+	//Method: PrintStats - virtual
+	//Displays node specific statistics
+	virtual void PrintStats() = 0;
 };

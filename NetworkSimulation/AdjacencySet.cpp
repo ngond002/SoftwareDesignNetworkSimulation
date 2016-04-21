@@ -1,5 +1,5 @@
 #include "AdjacencySet.h"
-
+#include <assert.h>
 struct PathNode
 {
 	int destinationIndex;
@@ -44,13 +44,19 @@ AdjacencySet::AdjacencySet(int numNodes)
 
 AdjacencySet::AdjacencySet(const AdjacencySet& other)
 {
+	_numNodes = other._numNodes;
+
+	weights = new int*[other._numNodes];
+
 	for (int row = 0; row < other._numNodes; row++)
 	{
-		for (int column = 0; column < _numNodes; _numNodes++)
+		weights[row] = new int[other._numNodes];
+
+		for (int column = 0; column < other._numNodes; column++)
 		{
 			weights[row][column] = other.weights[row][column];
 		}
-	}
+	}	
 }
 
 void AdjacencySet::UpdateWeight(int srcId, int destId, int weight)
@@ -151,7 +157,7 @@ int AdjacencySet::GetNextNode(int srcId, int destId)
 	int nextIndex = destIndex;
 	while (pathNodes[nextIndex].previousIndex != srcIndex)
 	{
-		nextIndex = pathNodes[nextIndex].previousIndex;
+		nextIndex = pathNodes[nextIndex].previousIndex;		
 	}
 
 	delete[] pathNodes;

@@ -5,10 +5,11 @@ using namespace std;
 
 int main()
 {
-	srand(1);
+	srand(10);
 	Graph::Instance(); // create the graph
-	RunSimulation(30.0);
-	cout << "*****************************************************";
+	RunSimulation(60);
+	Graph::Instance()->PrintStats();
+	cout << "<END SIMULATION>******************************";
 	cin.get();
 	return(0);
 }

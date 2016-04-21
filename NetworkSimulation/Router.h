@@ -22,6 +22,10 @@ private:
 	int _numLinks;
 	int* otherLinks;
 
+	double _runningServiceTimes;
+	Time _lastIdleTime;
+	int _numberExited;
+
 private:
 
 	//Method: Generate
@@ -46,4 +50,5 @@ public:
 
 	void NodeReceive(Packet* packet);
 	void NodeSend(Packet* packet);
+	void PrintStats();
 };
