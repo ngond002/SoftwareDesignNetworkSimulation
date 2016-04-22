@@ -7,7 +7,7 @@
 #include "SimObj.h"
 #include "Distribution.h"
 
-#define USE_GLOBAL_MATRIX
+//#define USE_GLOBAL_MATRIX
 
 class Router : virtual public Node, public SimObj
 {

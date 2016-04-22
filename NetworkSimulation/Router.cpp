@@ -110,8 +110,10 @@ void Router::Generate()
 	packet->_destId = destId;
 
 	//log addition
+#ifdef _DEBUG
 	cout << GetCurrentSimTime() << ", Router<" << _nodeId <<
 		"> Generate, Packet " << packet->_id << " for Router<" << destId << ">" << endl;
+#endif
 
 	// add to internal queue
 	_queues[_nodeId - 1].Enqueue(packet);
@@ -144,8 +146,10 @@ void Router::NodeReceive(Packet* packet)
 {
 	int previous = packet->_prevId;
 
+#ifdef _DEBUG
 	cout << GetCurrentSimTime() << ", Router<" << _nodeId <<
 		"> Receive Packet " << packet->_id << " from Router<" << previous << ">" << endl;
+#endif
 
 	// add packet to correct queue based on previous id
 	_queues[previous-1].Enqueue(packet);
@@ -192,8 +196,10 @@ void Router::Process()
 	_packetsInProcess--;
 
 	//log processing
+#ifdef _DEBUG
 	cout << GetCurrentSimTime() << ", Router<" << _nodeId <<
 		"> Process, Packet " << packet->_id << endl;
+#endif
 
 #ifdef USE_GLOBAL_MATRIX
 	if (_currentQueue != (_nodeId - 1)) // don't modify internal weight
@@ -222,9 +228,11 @@ void Router::Process()
 	}
 	else
 	{
+#ifdef _DEBUG
 		// consume event
 		cout << GetCurrentSimTime() << ", Router<" << _nodeId <<
 			"> Consume Packet " << packet->_id << endl;
+#endif
 		
 		// update packet time statistics
 		Packet::_runningTotalTime += (GetCurrentSimTime() - packet->_creationTime);
@@ -260,8 +268,10 @@ void Router::NodeSend(Packet* packet)
 	int nextId = _localAdjacencySet->GetNextNode(_nodeId, packet->_destId);
 #endif
 
+#ifdef _DEBUG
 	cout << GetCurrentSimTime() << ", Router<" << _nodeId <<
 		"> Send Packet " << packet->_id << " to Router<" << nextId << ">" << endl;
+#endif
 	
 	// keep information to update next node's adjacency set
 	packet->_prevId = _nodeId;
@@ -296,10 +306,17 @@ void Router::PrintStats()
 	_runningServiceTimes += (GetCurrentSimTime() - _lastIdleTime);
 	_lastIdleTime = GetCurrentSimTime();
 
+#ifdef _DEBUG
 	std::cout << std::endl;
 	std::cout << "Router<" << _nodeId << ">:\n";
 	std::cout << "AvgProcessTime: " << _runningServiceTimes / _numberExited << std::endl;
 	std::cout << "Utilization: " << _runningServiceTimes / GetCurrentSimTime() << std::endl;
+#else
+	std::cout << "Router<" << _nodeId << ">:\n";
+	std::cout << _runningServiceTimes / _numberExited << std::endl;
+	std::cout << _runningServiceTimes / GetCurrentSimTime() << std::endl;
+#endif
+
 
 	for (int queue = 0; queue < _numLinks; queue++)
 	{

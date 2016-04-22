@@ -89,8 +89,8 @@ int Graph::NodeCount()
 
 void Graph::PrintStats()
 {
-	std::cout << std::endl;
-	std::cout << "Graph Statistics:*************" << std::endl;
+	//std::cout << std::endl;
+	//std::cout << "Graph Statistics:*************" << std::endl;
 	for (int node = 0; node < _numNodes; node++)
 	{
 		this->_nodes[node]->PrintStats();
