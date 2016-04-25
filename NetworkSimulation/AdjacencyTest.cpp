@@ -4,6 +4,7 @@
 //
 //int main()
 //{
+// // Prologue: set up test network with weights
 //	AdjacencySet set(4);
 //	set.UpdateWeight(1, 2, 5);
 //	set.UpdateWeight(2, 1, 5);
@@ -14,6 +15,7 @@
 //	set.UpdateWeight(2, 4, 5);
 //	set.UpdateWeight(4, 2, 5);
 //
+//	// Test moving from source to destination
 //	int srcId = 2;
 //	int destId = 1;
 //	int nextIndex = set.GetNextNode(srcId, destId);

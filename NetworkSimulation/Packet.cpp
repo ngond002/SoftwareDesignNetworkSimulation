@@ -19,16 +19,9 @@ Packet::Packet()
 
 void Packet::PrintStats()
 {
-#ifdef _DEBUG
 	std::cout << std::endl;
 	std::cout << "Packets" << ":\n";
 	std::cout << "AvgTotalTime: " << _runningTotalTime / _numberConsumed << std::endl;
 	std::cout << "AvgWaitTime: " << _runningWaitTime / _numberConsumed << std::endl;
 	std::cout << "NumberConsumed: " << _numberConsumed << std::endl;
-#else
-	std::cout << "Packets" << ":\n";
-	std::cout << _runningTotalTime / _numberConsumed << std::endl;
-	std::cout << _runningWaitTime / _numberConsumed << std::endl;
-	std::cout << _numberConsumed << std::endl;
-#endif
 }

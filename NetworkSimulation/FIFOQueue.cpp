@@ -108,16 +108,10 @@ void FIFOQueue::PrintStats()
 
 	// correction term
 	_runningAvgSize += GetCurrentSimTime()*(_queueSize);
-#ifdef _DEBUG
+
 	std::cout << std::endl;
 	std::cout << _name << ":\n";
 	std::cout << "MaxQueueSize: " << _maxQueueSize << std::endl;
 	std::cout << "AvgQueueSize: " << _runningAvgSize / GetCurrentSimTime() << std::endl;
 	std::cout << "AvgQueueWait: " << _runningWaitTime / _numberExited << std::endl;
-#else
-	std::cout << _name << ":\n";
-	std::cout << _maxQueueSize << std::endl;
-	std::cout << _runningAvgSize / GetCurrentSimTime() << std::endl;
-	std::cout << _runningWaitTime / _numberExited << std::endl;
-#endif
 }

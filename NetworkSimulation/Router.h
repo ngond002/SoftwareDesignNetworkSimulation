@@ -7,7 +7,7 @@
 #include "SimObj.h"
 #include "Distribution.h"
 
-//#define USE_GLOBAL_MATRIX
+extern bool USE_GLOBAL_MATRIX;
 
 class Router : virtual public Node, public SimObj
 {
@@ -43,10 +43,9 @@ public:
 	//Constructor
 	//Parameters:	id - id given to this Router
 	//				serviceTime - delay to apply between processing and sending a packet
-	//				generationRate - the number of packets to create per time unit
+	//				interGenerationRate - the time delay between generating packets
 	//				numLinks
-	//Router(int id, double serviceTime, double generationRate);
-	Router(int id, Distribution* serviceTime, Distribution* generationRate, int linkCount, AdjacencySet* initialSet);
+	Router(int id, Distribution* serviceTime, Distribution* interGenerationRate, int linkCount, AdjacencySet* initialSet);
 
 	void NodeReceive(Packet* packet);
 	void NodeSend(Packet* packet);

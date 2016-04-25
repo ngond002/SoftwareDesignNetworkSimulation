@@ -37,11 +37,11 @@ public:
 	}
 };
 
-Router::Router(int id, Distribution* serviceTime, Distribution* generationRate, int linkCount, AdjacencySet* initialSet) : Node(id)
+Router::Router(int id, Distribution* serviceTime, Distribution* interGenerationRate, int linkCount, AdjacencySet* initialSet) : Node(id)
 {
 	_numLinks = linkCount;
 	_serviceTime = serviceTime;
-	_generationRate = generationRate;
+	_generationRate = interGenerationRate;
 	_queues = new FIFOQueue[_numLinks];
 	_routerIdle = true; 
 	_packetsInProcess = 0;
@@ -152,14 +152,14 @@ void Router::NodeReceive(Packet* packet)
 #endif
 
 	// add packet to correct queue based on previous id
-	_queues[previous-1].Enqueue(packet);
+	_queues[previous - 1].Enqueue(packet);
 	_packetsInProcess++;
 
-#if defined USE_GLOBAL_MATRIX
-	// update global adjacency set due to enqueue
-	int weight = _queues[previous-1].Size();
-	Graph::Instance()->GetGlobalAdjacency().UpdateWeight(previous, _nodeId, weight);
-#endif
+	if (USE_GLOBAL_MATRIX) {
+		// update global adjacency set due to enqueue
+		int weight = _queues[previous - 1].Size();
+		Graph::Instance()->GetGlobalAdjacency().UpdateWeight(previous, _nodeId, weight);
+	}
 
 	// check if router is idle
 	if (_routerIdle)
@@ -201,21 +201,22 @@ void Router::Process()
 		"> Process, Packet " << packet->_id << endl;
 #endif
 
-#ifdef USE_GLOBAL_MATRIX
-	if (_currentQueue != (_nodeId - 1)) // don't modify internal weight
-	{
-		// update global adjacency set due to dequeue - _currentQueue + 1 = id of node associated with queue
-		int weight = _queues[_currentQueue].Size();
-		Graph::Instance()->GetGlobalAdjacency().UpdateWeight(_currentQueue + 1, _nodeId, weight);
+	if (USE_GLOBAL_MATRIX) {
+		if (_currentQueue != (_nodeId - 1)) // don't modify internal weight
+		{
+			// update global adjacency set due to dequeue - _currentQueue + 1 = id of node associated with queue
+			int weight = _queues[_currentQueue].Size();
+			Graph::Instance()->GetGlobalAdjacency().UpdateWeight(_currentQueue + 1, _nodeId, weight);
+		}
 	}
-#else
-	if (packet->_prevId != -1)
-	{
-		// update the local table with information from the packet
-		int weight = packet->_prevQueueSize;
-		_localAdjacencySet->UpdateWeight(_nodeId, packet->_prevId, weight);
+	else {
+		if (packet->_prevId != -1)
+		{
+			// update the local table with information from the packet
+			int weight = packet->_prevQueueSize;
+			_localAdjacencySet->UpdateWeight(_nodeId, packet->_prevId, weight);
+		}
 	}
-#endif
 
 	_currentQueue = (_currentQueue + 1) % _numLinks; // move to next queue
 
@@ -262,11 +263,14 @@ void Router::Process()
 void Router::NodeSend(Packet* packet)
 {
 	// obtain next node to send packet
-#if defined USE_GLOBAL_MATRIX
-	int nextId = Graph::Instance()->GetGlobalAdjacency().GetNextNode(_nodeId, packet->_destId);
-#else
-	int nextId = _localAdjacencySet->GetNextNode(_nodeId, packet->_destId);
-#endif
+	int nextId;
+
+	if (USE_GLOBAL_MATRIX) {
+		nextId = Graph::Instance()->GetGlobalAdjacency().GetNextNode(_nodeId, packet->_destId);
+	}
+	else {
+		nextId = _localAdjacencySet->GetNextNode(_nodeId, packet->_destId);
+	}
 
 #ifdef _DEBUG
 	cout << GetCurrentSimTime() << ", Router<" << _nodeId <<
@@ -306,16 +310,11 @@ void Router::PrintStats()
 	_runningServiceTimes += (GetCurrentSimTime() - _lastIdleTime);
 	_lastIdleTime = GetCurrentSimTime();
 
-#ifdef _DEBUG
+
 	std::cout << std::endl;
 	std::cout << "Router<" << _nodeId << ">:\n";
 	std::cout << "AvgProcessTime: " << _runningServiceTimes / _numberExited << std::endl;
 	std::cout << "Utilization: " << _runningServiceTimes / GetCurrentSimTime() << std::endl;
-#else
-	std::cout << "Router<" << _nodeId << ">:\n";
-	std::cout << _runningServiceTimes / _numberExited << std::endl;
-	std::cout << _runningServiceTimes / GetCurrentSimTime() << std::endl;
-#endif
 
 
 	for (int queue = 0; queue < _numLinks; queue++)

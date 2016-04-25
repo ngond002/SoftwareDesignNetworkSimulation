@@ -1,5 +1,6 @@
 #include "AdjacencySet.h"
 #include <assert.h>
+
 struct PathNode
 {
 	int destinationIndex;
