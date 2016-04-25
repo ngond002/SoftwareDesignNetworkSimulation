@@ -2,10 +2,18 @@
 
 typedef double Time;
 
-
+//Method: RunSimulation
+//Executes events in timestamp order until no events are left
 void RunSimulation();
+
+//Method: RunSimulation
+//Parameters: Time endTime - Time stamp to stop the simulation
+//Executes events in timestamp order until no events are left or end time is reached
 void RunSimulation(Time endTime);
-Time GetCurrentSimTime(); // modified GetCurrentTime as friend function
+
+//Method: GetCurrentSimTime
+//Obtain current simulation time
+Time GetCurrentSimTime();
 
 class Event
 {
